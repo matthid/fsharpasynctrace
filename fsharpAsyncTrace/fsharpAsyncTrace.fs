@@ -20,6 +20,7 @@ module AsyncTrace =
                 with get() = info
                 and set(newValue) = info <- newValue 
             member x.Capture (newList:TraceList<'Info>) =
+                // TODO: This has to be done properly
                 if not (newList.Contains(x)) then newList.Add(x)
                 for current in list do
                     if not (newList.Contains(current)) then 
@@ -49,12 +50,10 @@ module AsyncTrace =
 
     type AsyncTraceBuilder<'Info, 'T>() as x = 
         let internalList = new TraceList<'Info>()
-        let builded = new TraceList<'Info>()
 
         let buildTrace async = 
             let b = new AsyncTrace<'Info, 'Y>(None, async)
             (b :> IAsyncTrace<'Info>).Capture internalList
-            builded.Add(b)
             b
             
 
