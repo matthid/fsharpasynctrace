@@ -1,7 +1,7 @@
 ﻿
 ### FSharp Async Tracing
 
-This Library allows you to trace you async workflows in F#. 
+This Library allows you to trace you async workflows in F# (FSharp). 
 
 
 ### Using
@@ -36,7 +36,7 @@ ITracer can be anything you like really (as its full generic)
 
 But be carefull, right before running your "asyncTrace" you have to actually assign your tracer.
 To execute it just convert it to an Async with "convertToAsync".
-```f#
+```fsharp
 let workFlow = myComp()
 // Set your tracer, remember that you can use your own types here!
 workFlow.SetInfo (new DefaultStateTracer("Workflow 01") :> ITracer)
