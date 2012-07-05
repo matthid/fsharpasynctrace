@@ -41,8 +41,12 @@
   <ItemGroup>
     <Compile Include="fsharpAsyncTrace.fs" />
     <None Include="Script.fsx" />
-    <None Include="Readme.md" />
-    <None Include="License.md" />
+    <None Include="..\License.md">
+      <Link>License.md</Link>
+    </None>
+    <None Include="..\Readme.md">
+      <Link>Readme.md</Link>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\FSharp\1.0\Microsoft.FSharp.Targets" Condition="!Exists('$(MSBuildBinPath)\Microsoft.Build.Tasks.v4.0.dll')" />
   <Import Project="$(MSBuildExtensionsPath32)\..\Microsoft F#\v4.0\Microsoft.FSharp.Targets" Condition=" Exists('$(MSBuildBinPath)\Microsoft.Build.Tasks.v4.0.dll')" />
