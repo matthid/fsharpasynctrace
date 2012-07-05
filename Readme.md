@@ -52,7 +52,7 @@ I know this is currently not done properly,
 but it took me several attempts to get it even running.
 
 So I'm asking for only one thing: 
-If you use this in your code and find it usefull and change it to a better state, please submit a patch back here.
+If you use this in your code, find it usefull and change it to a better state, please submit a patch back here.
 
 ### License 
 
