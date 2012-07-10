@@ -7,10 +7,11 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{6f638b25-33c8-4898-92ac-9579446b7250}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>fsharpAsyncTrace</RootNamespace>
-    <AssemblyName>fsharpAsyncTrace</AssemblyName>
+    <RootNamespace>Yaaf.AsyncTrace</RootNamespace>
+    <AssemblyName>Yaaf.AsyncTrace</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <Name>fsharpAsyncTrace</Name>
+    <Name>Yaaf.AsyncTrace</Name>
+    <TargetFrameworkProfile>Mono_2.10</TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -20,7 +21,7 @@
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
-    <DocumentationFile>bin\Debug\fsharpAsyncTrace.XML</DocumentationFile>
+    <DocumentationFile>bin\Debug\Yaaf.AsyncTrace.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -29,7 +30,7 @@
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
-    <DocumentationFile>bin\Release\fsharpAsyncTrace.XML</DocumentationFile>
+    <DocumentationFile>bin\Release\Yaaf.AsyncTrace.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />
@@ -39,7 +40,9 @@
     <Reference Include="System.Numerics" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="fsharpAsyncTrace.fs" />
+    <Compile Include="AssemblyInfo.fs" />
+    <Compile Include="AsyncTraceLogic.fs" />
+    <Compile Include="Logging.fs" />
     <None Include="Script.fsx" />
     <None Include="..\License.md">
       <Link>License.md</Link>

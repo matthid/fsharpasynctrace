@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "fsharpAsyncTrace", "fsharpAsyncTrace\fsharpAsyncTrace.fsproj", "{6F638B25-33C8-4898-92AC-9579446B7250}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Yaaf.AsyncTrace", "Yaaf.AsyncTrace\Yaaf.AsyncTrace.fsproj", "{6F638B25-33C8-4898-92AC-9579446B7250}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
