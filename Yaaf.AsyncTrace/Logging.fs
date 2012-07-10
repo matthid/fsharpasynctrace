@@ -94,3 +94,4 @@ module LoggingModule =
         member x.childTracer baseTracer newActivity = 
             let tracer = new DefaultStateTracer(baseTracer, newActivity)
             x.log System.Diagnostics.TraceEventType.Transfer "%s" (tracer.ActivityId.ToString())
+            tracer :> ITracer
