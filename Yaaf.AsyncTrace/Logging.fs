@@ -12,11 +12,31 @@ open System.IO
 module LogInterface =
     type ITracer = 
         inherit IDisposable
-        abstract member log : Diagnostics.TraceEventType ->Printf.StringFormat<'a, unit> -> 'a
         abstract member TraceSource : TraceSource
+        abstract member ActivityId : Guid
 
 [<AutoOpen>]
 module LoggingModule = 
+    type ITracer with 
+        member x.doInId f = 
+            let oldId = Trace.CorrelationManager.ActivityId
+            try
+                Trace.CorrelationManager.ActivityId <- x.ActivityId
+                f()
+            finally
+                Trace.CorrelationManager.ActivityId <- oldId
+        member x.logHelper ty (s : string) =  
+            x.doInId 
+                (fun () ->
+                    x.TraceSource.TraceEvent(ty, 0, s)
+                    x.TraceSource.Flush())
+        member x.log ty fmt = Printf.kprintf (x.logHelper ty) fmt  
+        member x.logVerb fmt = x.log System.Diagnostics.TraceEventType.Verbose fmt
+        member x.logWarn fmt = x.log System.Diagnostics.TraceEventType.Warning fmt
+        member x.logCrit fmt = x.log System.Diagnostics.TraceEventType.Critical fmt
+        member x.logErr fmt =  x.log System.Diagnostics.TraceEventType.Error fmt
+        member x.logInfo fmt = x.log System.Diagnostics.TraceEventType.Information fmt
+
     type MyTraceSource(traceEntry:string,name:string) as x= 
         inherit TraceSource(traceEntry)
         do 
@@ -48,32 +68,20 @@ module LoggingModule =
             x.Listeners.Clear()
             x.Listeners.AddRange(newTracers)
 
-    type DefaultStateTracer(traceSource:TraceSource, activityName:string) = 
+    type DefaultStateTracer(traceSource:TraceSource, activityName:string) as x= 
         let trace = traceSource
         let activity = Guid.NewGuid()
-        let doInId f = 
-            let oldId = Trace.CorrelationManager.ActivityId
-            try
-                Trace.CorrelationManager.ActivityId <- activity
-                f()
-            finally
-                Trace.CorrelationManager.ActivityId <- oldId
-        let logHelper ty (s : string) =  
-            doInId 
-                (fun () ->
-                    trace.TraceEvent(ty, 0, s)
-                    trace.Flush())
+        let self = x :> ITracer
         do 
-            doInId (fun () -> trace.TraceEvent(TraceEventType.Start, 0, activityName))
+            x.doInId (fun () -> trace.TraceEvent(TraceEventType.Start, 0, activityName))
         
-        member x.ActivityId = activity
         interface IDisposable with
             member x.Dispose() = 
-                doInId (fun () -> trace.TraceEvent(TraceEventType.Stop, 0, activityName))
+                x.doInId (fun () -> trace.TraceEvent(TraceEventType.Stop, 0, activityName))
         
         interface ITracer with 
-            member x.log ty fmt = Printf.kprintf (logHelper ty) fmt  
             member x.TraceSource = trace
+            member x.ActivityId = activity
 
     module Logging = 
         let MySource traceEntry name = new MyTraceSource(traceEntry, name)
@@ -84,14 +92,12 @@ module LoggingModule =
         
         let SetDefaultTracer traceSource id (traceAsy:AsyncTrace<_,_>) = 
             traceAsy |> AsyncTrace.SetTracer (DefaultTracer traceSource id)
+       
         
     type ITracer with 
-        member x.logVerb fmt = x.log System.Diagnostics.TraceEventType.Verbose fmt
-        member x.logWarn fmt = x.log System.Diagnostics.TraceEventType.Warning fmt
-        member x.logCrit fmt = x.log System.Diagnostics.TraceEventType.Critical fmt
-        member x.logErr fmt =  x.log System.Diagnostics.TraceEventType.Error fmt
-        member x.logInfo fmt = x.log System.Diagnostics.TraceEventType.Information fmt
         member x.childTracer baseTracer newActivity = 
-            let tracer = new DefaultStateTracer(baseTracer, newActivity)
-            x.log System.Diagnostics.TraceEventType.Transfer "%s" (tracer.ActivityId.ToString())
-            tracer :> ITracer
+            let tracer = new DefaultStateTracer(baseTracer, newActivity) :> ITracer
+            x.doInId 
+                (fun () -> 
+                    x.TraceSource.TraceTransfer(0, "Switching to " + newActivity, tracer.ActivityId))
+            tracer
