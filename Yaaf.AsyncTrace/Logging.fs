@@ -40,6 +40,8 @@ module LoggingModule =
     type MyTraceSource(traceEntry:string,name:string) as x= 
         inherit TraceSource(traceEntry)
         do 
+            // NOTE: Shared Listeners are not supported
+            // (currently we create new ones and do not share them the same way)
             let newTracers = [|
                 for l in x.Listeners do
                     let t = l.GetType()
@@ -64,6 +66,17 @@ module LoggingModule =
                     if (constr = null) then 
                         failwith (sprintf "TraceListener Constructor for Type %s not found" (t.FullName))
                     let listener = constr.Invoke(if newFileName = "" then [| |]  else [| newFileName |]) :?> TraceListener
+                    // Copy other properties.
+                    listener.Attributes.Clear()
+                    for pair in 
+                        l.Attributes.Keys
+                            |> Seq.cast
+                            |> Seq.map2 (fun k v -> k,v) (l.Attributes.Values |> Seq.cast) do
+                        listener.Attributes.Add pair
+                    listener.Filter <- l.Filter
+                    listener.IndentLevel <- l.IndentLevel
+                    listener.Name <- l.Name
+                    listener.TraceOutputOptions <- l.TraceOutputOptions
                     yield listener |]
             x.Listeners.Clear()
             x.Listeners.AddRange(newTracers)
