@@ -55,17 +55,17 @@ module LoggingModule =
                         else System.IO.Path.Combine("logs", sprintf "%s.log" l.Name)
                     
                     let newFileName =
-                        if oldRelFilePath = "" then ""
+                        if System.String.IsNullOrEmpty(oldRelFilePath) then null
                         else
                             let fileName = Path.GetFileNameWithoutExtension(oldRelFilePath)
                             let extension = Path.GetExtension(oldRelFilePath)
                             Path.Combine(
                                 Path.GetDirectoryName(oldRelFilePath),
                                 sprintf "%s.%s%s" fileName name extension)
-                    let constr = t.GetConstructor(if newFileName = "" then [| |] else [| typeof<string> |])
+                    let constr = t.GetConstructor(if newFileName = null then [| |] else [| typeof<string> |])
                     if (constr = null) then 
                         failwith (sprintf "TraceListener Constructor for Type %s not found" (t.FullName))
-                    let listener = constr.Invoke(if newFileName = "" then [| |]  else [| newFileName |]) :?> TraceListener
+                    let listener = constr.Invoke(if newFileName = null then [| |]  else [| newFileName |]) :?> TraceListener
                     // Copy other properties.
                     listener.Attributes.Clear()
                     for pair in 
