@@ -42,13 +42,14 @@ module LoggingModule =
         do 
             // NOTE: Shared Listeners are not supported
             // (currently we create new ones and do not share them the same way)
+            let flags = System.Reflection.BindingFlags.NonPublic ||| 
+                                                System.Reflection.BindingFlags.Instance
             let newTracers = [|
                 for l in x.Listeners do
                     let t = l.GetType()
                     let initField =
                         t.GetField(
-                            "initializeData", System.Reflection.BindingFlags.NonPublic ||| 
-                                                System.Reflection.BindingFlags.Instance)
+                            "initializeData", flags)
                     let oldRelFilePath =
                         if initField <> null then
                                 initField.GetValue(l) :?> string
@@ -62,7 +63,14 @@ module LoggingModule =
                             Path.Combine(
                                 Path.GetDirectoryName(oldRelFilePath),
                                 sprintf "%s.%s%s" fileName name extension)
-                    let constr = t.GetConstructor(if newFileName = null then [| |] else [| typeof<string> |])
+
+                    // NOTE: On mono the DefaultTraceSource Listener Constructor is private
+                    let constr = 
+                        t.GetConstructor(
+                            flags, 
+                            null, 
+                            (if newFileName = null then [| |] else [| typeof<string> |]), 
+                            null)
                     if (constr = null) then 
                         failwith (sprintf "TraceListener Constructor for Type %s not found" (t.FullName))
                     let listener = constr.Invoke(if newFileName = null then [| |]  else [| newFileName |]) :?> TraceListener
