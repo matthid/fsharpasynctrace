@@ -2,18 +2,18 @@
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{6f638b25-33c8-4898-92ac-9579446b7250}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <RootNamespace>Yaaf.AsyncTrace</RootNamespace>
-    <AssemblyName>Yaaf.AsyncTrace</AssemblyName>
+    <ProjectGuid>{51a2f878-b298-4799-9431-dd4597d6af57}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Yaaf.AsyncTrace.Test</RootNamespace>
+    <AssemblyName>Yaaf.AsyncTrace.Test</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <Name>Yaaf.AsyncTrace</Name>
     <TargetFrameworkProfile>Mono_2.10</TargetFrameworkProfile>
+    <Name>Yaaf.AsyncTrace.Test</Name>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -21,41 +21,39 @@
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
-    <DocumentationFile>bin\Debug\Yaaf.AsyncTrace.XML</DocumentationFile>
+    <PlatformTarget>x86</PlatformTarget>
+    <DocumentationFile>bin\Debug\Yaaf.AsyncTrace.Test.XML</DocumentationFile>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <Tailcalls>true</Tailcalls>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
-    <DocumentationFile>bin\Release\Yaaf.AsyncTrace.XML</DocumentationFile>
-    <StartAction>Project</StartAction>
-    <StartProgram>D:\Projects\Aktuell\synclib\src\Yaaf.ConsoleSync\bin\Debug\ConsoleSync.exe</StartProgram>
+    <PlatformTarget>x86</PlatformTarget>
+    <DocumentationFile>bin\Release\Yaaf.AsyncTrace.Test.XML</DocumentationFile>
   </PropertyGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\FSharp\1.0\Microsoft.FSharp.Targets" Condition="!Exists('$(MSBuildBinPath)\Microsoft.Build.Tasks.v4.0.dll')" />
+  <Import Project="$(MSBuildExtensionsPath32)\..\Microsoft F#\v4.0\Microsoft.FSharp.Targets" Condition=" Exists('$(MSBuildBinPath)\Microsoft.Build.Tasks.v4.0.dll')" />
+  <ItemGroup>
+    <None Include="App.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <Compile Include="Program.fs" />
+  </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />
     <Reference Include="FSharp.Core" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
-    <Reference Include="System.Xml" />
+    <ProjectReference Include="..\Yaaf.AsyncTrace\Yaaf.AsyncTrace.fsproj">
+      <Name>Yaaf.AsyncTrace</Name>
+      <Project>{6f638b25-33c8-4898-92ac-9579446b7250}</Project>
+      <Private>True</Private>
+    </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="AssemblyInfo.fs" />
-    <Compile Include="AsyncTraceLogic.fs" />
-    <Compile Include="Logging.fs" />
-    <None Include="Script.fsx" />
-    <None Include="..\License.md">
-      <Link>License.md</Link>
-    </None>
-    <None Include="..\Readme.md">
-      <Link>Readme.md</Link>
-    </None>
-  </ItemGroup>
-  <Import Project="$(MSBuildExtensionsPath32)\FSharp\1.0\Microsoft.FSharp.Targets" Condition="!Exists('$(MSBuildBinPath)\Microsoft.Build.Tasks.v4.0.dll')" />
-  <Import Project="$(MSBuildExtensionsPath32)\..\Microsoft F#\v4.0\Microsoft.FSharp.Targets" Condition=" Exists('$(MSBuildBinPath)\Microsoft.Build.Tasks.v4.0.dll')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
 	     Other similar extension points exist, see Microsoft.Common.targets.
 	<Target Name="BeforeBuild">
