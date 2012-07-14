@@ -91,14 +91,27 @@ module LoggingModule =
             let flags = System.Reflection.BindingFlags.Public |||
                         System.Reflection.BindingFlags.NonPublic ||| 
                         System.Reflection.BindingFlags.Instance
-                        
+            let invalid = Path.GetInvalidFileNameChars() 
+                                |> Seq.append (Path.GetInvalidPathChars())   
+            let cleanPath = 
+                (
+                name 
+                    |> Seq.fold 
+                        (fun (builder:Text.StringBuilder) char -> 
+                            builder.Append(
+                                if invalid |> Seq.exists (fun i -> i = char) 
+                                then '_'
+                                else char))
+                        (new System.Text.StringBuilder(name.Length))
+                ).ToString()
+
             let eventCache = new TraceEventCache(); 
 
             let newTracers = [|
                 for l in x.Listeners do
                     match l:>obj with
                     | :? IMyListener as myListener ->
-                        yield myListener.Duplicate(name)
+                        yield myListener.Duplicate(cleanPath)
                     | _ ->
                         l.TraceEvent(eventCache, x.Name, TraceEventType.Error, 0, sprintf "Unknown Listener, can't apply name \"%s\"" name)
                 |]
